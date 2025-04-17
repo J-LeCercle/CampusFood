@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFood - Connexion</title>
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #004e89;
+        }
+
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: url('https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae') no-repeat center center/cover;
+        }
+
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+
+        .header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+
+        .form-container {
+            position: relative;
+        }
+
+
+        .form {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+
+        .form.active {
+            display: flex;
+        }
+
+
+        input, select {
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+
+        button[type="submit"] {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+
+        button[type="submit"]:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: -10px;
+            display: none;
+        }
+
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+
+        .forgot-password a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span>🍔</span>CampusFood<span>🍹</span></h1>
+        </div>
+
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchForm('login')">Connexion</button>
+            <button class="tab" onclick="switchForm('signup')">Inscription</button>
+        </div>
+
+        
+        <div class="form-container">
+            <!-- Formulaire de Connexion -->
+            <form id="loginForm" class="form active" onsubmit="return validateLogin(event)">
+                <input type="email" id="loginEmail" placeholder="Adresse Email ">
+                <input type="password" id="loginPassword" placeholder="Mot de passe">
+                <div class="error" id="loginError"></div>
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Se souvenir de moi</label>
+                </div>
+                <button type="submit">Accéder au campus</button>
+            </form>
+
+
+            <!-- Formulaire d'Inscription -->
+            <form id="signupForm" class="form" onsubmit="return validateSignup(event)">
+                <h2>Bienvenue sur CampusFood 🎉</h2>
+                <input type="text" id="signupMatricule" placeholder="Numéro matricule">
+                <input type="email" id="signupEmail" placeholder="Adresse Email ">
+                <input type="tel" id="signupPhone" placeholder="Téléphone">
+                <select id="campusLocation">
+                    <option value="">Choisir votre campus</option>
+                    <option value="Aube Nouvelle">Aube Nouvelle</option>
+                    <option value="IAM">IAM</option>
+                    <option value="Nazi Boni">Nazi Boni</option>
+                </select>
+                <input type="password" id="signupPassword" placeholder="Créer un mot de passe">
+                <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe">
+                <div class="error" id="signupError"></div>
+                <button type="submit">Rejoindre CampusFood</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        function switchForm(formType) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.tab[onclick="switchForm('${formType}')"]`).classList.add('active');
+            
+            document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
+            document.getElementById(`${formType}Form`).classList.add('active');
+        }
+
+
+        function validateLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('loginError');
+
+
+            errorElement.style.display = 'none';
+
+
+            if (!validateCampusEmail(email)) {
+                showError(errorElement, "Veuillez utiliser votre email universitaire");
+                return false;
+            }
+
+
+            if (password.length < 8) {
+                showError(errorElement, "Le mot de passe doit contenir au moins 8 caractères");
+                return false;
+            }
+            
+            window.location.href = 'https://j-lecercle.github.io/FoodCampusWard/';
+            return true;
+        }
+
+        
+        function validateSignup(event) {
+            event.preventDefault();
+            const matricule = document.getElementById('signupMatricule').value;
+            const email = document.getElementById('signupEmail').value;
+            const phone = document.getElementById('signupPhone').value;
+            const campus = document.getElementById('campusLocation').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorElement = document.getElementById('signupError');
+
+
+            errorElement.style.display = 'none';
+
+
+            if (!/^\d{8}$/.test(matricule)) {
+                showError(errorElement, "Numéro matricule invalide (8 chiffres requis)");
+                return false;
+            }
+
+
+            if (!validateCampusEmail(email)) {
+                showError(errorElement, "Adresse Email invalide");
+                return false;
+            }
+
+
+            if (!campus) {
+                showError(errorElement, "Veuillez sélectionner votre campus");
+                return false;
+            }
+
+
+            if (password.length < 8) {
+                showError(errorElement, "Le mot de passe doit contenir au moins 8 caractères");
+                return false;
+            }
+
+
+            if (password !== confirmPassword) {
+                showError(errorElement, "Les mots de passe ne correspondent pas");
+                return false;
+            }
+
+            window.location.href = 'https://j-lecercle.github.io/FoodCampusWard/';
+            
+            return true;
+        }
+
+
+        function validateCampusEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
+        }
+
+
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';}
+        </script>
+</body>
